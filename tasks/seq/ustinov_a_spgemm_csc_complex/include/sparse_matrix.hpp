@@ -1,7 +1,8 @@
 #include <complex>
 #include <random>
 #include <vector>
- // sparse matrix in CSC (Compressed Sparse Column) format
+
+// sparse matrix in CSC (Compressed Sparse Column) format
 struct sparse_matrix {
   int row_num, col_num;                      // number of rows and columns in matrix
   int nonzeros;                              // number of non-zero elements

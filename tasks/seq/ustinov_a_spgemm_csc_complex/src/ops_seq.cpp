@@ -5,7 +5,7 @@
 
 bool SpgemmCSCComplex::pre_processing() {
   internal_order_test();
-  
+
   A = reinterpret_cast<sparse_matrix*>(taskData->inputs[0]);
   B = reinterpret_cast<sparse_matrix*>(taskData->inputs[1]);
   C = reinterpret_cast<sparse_matrix*>(taskData->outputs[0]);
@@ -22,7 +22,7 @@ bool SpgemmCSCComplex::validation() {
 
 bool SpgemmCSCComplex::run() {
   internal_order_test();
-  
+
   // symbolic stage
   C->row_num = A->row_num;
   C->col_num = B->col_num;
@@ -45,12 +45,12 @@ bool SpgemmCSCComplex::run() {
     }
     C->col_ptr[b_col + 1] = col_nonzero_count + C->col_ptr[b_col];
   }
-  
+
   // allocate memory for matrix C
   int total_nonzeros = C->col_ptr[C->col_num];
   C->rows.resize(total_nonzeros);
   C->values.resize(total_nonzeros);
-  
+
   // numeric stage
   std::complex<double> zero, b_value;
   std::vector<std::complex<double>> accumulator(C->row_num);
@@ -79,7 +79,7 @@ bool SpgemmCSCComplex::run() {
       }
     }
   }
-  
+
   return true;
 }
 

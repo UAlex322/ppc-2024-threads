@@ -5,6 +5,7 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
+
 #include "seq/ustinov_a_spgemm_csc_complex/include/ops_seq.hpp"
 #include "seq/ustinov_a_spgemm_csc_complex/include/sparse_matrix.hpp"
 
@@ -13,7 +14,7 @@ sparse_matrix dft_matrix(int n) {
   std::complex<double> exponent{0.0, -2.0 * M_PI / N};
   sparse_matrix dft(n, n, n * n);
   for (int i = 1; i <= n; ++i) {
-    dft.col_ptr[i] = i*n;
+    dft.col_ptr[i] = i * n;
   }
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
@@ -29,7 +30,7 @@ sparse_matrix dft_conj_matrix(int n) {
   std::complex<double> exponent{0.0, 2.0 * M_PI / N};
   sparse_matrix dft_conj(n, n, n * n);
   for (int i = 1; i <= n; ++i) {
-    dft_conj.col_ptr[i] = i*n;
+    dft_conj.col_ptr[i] = i * n;
   }
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
@@ -41,7 +42,7 @@ sparse_matrix dft_conj_matrix(int n) {
 }
 
 TEST(ustinov_a_spgemm_csc_complex_seq_func, test_scalar_matrix) {
-  
+
   sparse_matrix A(1, 1, 1), B(1, 1, 1), C;
   A.col_ptr = {0, 1};
   A.rows = {0};
@@ -68,7 +69,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_scalar_matrix) {
 
 
 TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft2x2) {
-  
+
   double N = 2.0;
   std::complex<double> exponent{0, -2.0 * M_PI / N};
   sparse_matrix A(2, 2, 4), B(2, 2, 4), C;
@@ -101,14 +102,14 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft2x2) {
 }
 
 TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft16x16) {
-  
+
   int n = 16;
   double N = 16.0;
   sparse_matrix A = dft_matrix(n);
   sparse_matrix B = dft_conj_matrix(n);
   sparse_matrix C;
-  
-  
+
+
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t*>(&A));
@@ -132,13 +133,13 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft16x16) {
 }
 
 TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft64x64) {
-  
+
   int n = 64;
   double N = 64.0;
   sparse_matrix A = dft_matrix(n);
   sparse_matrix B = dft_conj_matrix(n);
   sparse_matrix C;
-  
+
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t*>(&A));
@@ -195,7 +196,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_shifting_diagonal) {
   }
 }
 
- TEST(ustinov_a_spgemm_csc_complex_seq_func, test_permutation_matrix) {
+TEST(ustinov_a_spgemm_csc_complex_seq_func, test_permutation_matrix) {
   int n = 257;
   sparse_matrix A(n, n, n), B(n, n, n), C;
   int pos = 3;
@@ -223,9 +224,9 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_shifting_diagonal) {
   testTaskSequential.run();
   testTaskSequential.post_processing();
 
-   for (int i = 0; i < n; ++i) {
-     EXPECT_EQ(C.col_ptr[i], i);
-     EXPECT_EQ(C.rows[i], i);
+  for (int i = 0; i < n; ++i) {
+    EXPECT_EQ(C.col_ptr[i], i);
+    EXPECT_EQ(C.rows[i], i);
     EXPECT_NEAR(std::abs(C.values[i] - std::complex<double>(1.0, 0.0)), 0.0, 1e-6);
   }
   EXPECT_EQ(C.col_ptr[n], n);
