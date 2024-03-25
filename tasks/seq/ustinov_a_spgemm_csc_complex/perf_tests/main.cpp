@@ -1,22 +1,24 @@
 // Copyright 2024 Ustinov Alexander
 #include <gtest/gtest.h>
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <vector>
-
 #include "core/perf/include/perf.hpp"
 #include "seq/ustinov_a_spgemm_csc_complex/include/ops_seq.hpp"
 #include "seq/ustinov_a_spgemm_csc_complex/include/sparse_matrix.hpp"
 
 sparse_matrix dft_matrix(int n) {
   double N = (double)n;
-  std::complex<double> exponent{0.0, -2.0*M_PI/N};
-  sparse_matrix dft(n,n,n*n);
-  for (int i = 1; i <= n; ++i)
+  std::complex<double> exponent{0.0, -2.0 * M_PI / N};
+  sparse_matrix dft(n, n, n * n);
+  for (int i = 1; i <= n; ++i) {
     dft.col_ptr[i] = i*n;
+  }
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
-      dft.rows[i*n + j] = j;
-      dft.values[i*n + j] = std::exp(exponent*double(i*j));
+      dft.rows[i * n + j] = j;
+      dft.values[i * n + j] = std::exp(exponent * double(i * j));
     }
   }
   return dft;
@@ -24,14 +26,15 @@ sparse_matrix dft_matrix(int n) {
 
 sparse_matrix dft_conj_matrix(int n) {
   double N = (double)n;
-  std::complex<double> exponent{0.0, 2.0*M_PI/N};
-  sparse_matrix dft_conj(n,n,n*n);
-  for (int i = 1; i <= n; ++i)
+  std::complex<double> exponent{0.0, 2.0 * M_PI / N};
+  sparse_matrix dft_conj(n, n, n * n);
+  for (int i = 1; i <= n; ++i) {
     dft_conj.col_ptr[i] = i*n;
+  }
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < n; ++j) {
-      dft_conj.rows[i*n + j] = j;
-      dft_conj.values[i*n + j] = std::exp(exponent*double(j*i));
+      dft_conj.rows[i * n + j] = j;
+      dft_conj.values[i * n + j] = std::exp(exponent * double(j * i));
     }
   }
   return dft_conj;
