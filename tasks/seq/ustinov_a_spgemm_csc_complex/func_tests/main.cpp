@@ -198,6 +198,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_permutation_matrix) {
   int pos = 3;
   for (int i = 0; i < n; ++i) {
     A.col_ptr[i] = B.col_ptr[i] = i;
+    A.values[i] = B.values[i] = {1.0, 0.0};
     A.rows[i] = pos;
     pos = (pos * 3) % n;
   }
