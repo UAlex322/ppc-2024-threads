@@ -11,7 +11,7 @@
 
 sparse_matrix dft_matrix(int n) {
   double N = (double)n;
-  std::complex<double> exponent{0.0, -2.0 * M_PI / N};
+  std::complex<double> exponent{0.0, -2.0 * PI / N};
   sparse_matrix dft(n, n, n * n);
   for (int i = 1; i <= n; ++i) {
     dft.col_ptr[i] = i * n;
@@ -27,7 +27,7 @@ sparse_matrix dft_matrix(int n) {
 
 sparse_matrix dft_conj_matrix(int n) {
   double N = (double)n;
-  std::complex<double> exponent{0.0, 2.0 * M_PI / N};
+  std::complex<double> exponent{0.0, 2.0 * PI / N};
   sparse_matrix dft_conj(n, n, n * n);
   for (int i = 1; i <= n; ++i) {
     dft_conj.col_ptr[i] = i * n;
@@ -68,7 +68,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_func, test_scalar_matrix) {
 
 TEST(ustinov_a_spgemm_csc_complex_seq_func, test_dft2x2) {
   double N = 2.0;
-  std::complex<double> exponent{0, -2.0 * M_PI / N};
+  std::complex<double> exponent{0, -2.0 * PI / N};
   sparse_matrix A(2, 2, 4), B(2, 2, 4), C;
   A.col_ptr = {0, 2, 4};
   A.rows = {0, 1, 0, 1};
