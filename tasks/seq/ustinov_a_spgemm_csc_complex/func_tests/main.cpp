@@ -9,6 +9,8 @@
 #include "seq/ustinov_a_spgemm_csc_complex/include/ops_seq.hpp"
 #include "seq/ustinov_a_spgemm_csc_complex/include/sparse_matrix.hpp"
 
+const double PI = 3.14159265358979323846;
+
 sparse_matrix dft_matrix(int n) {
   double N = (double)n;
   std::complex<double> exponent{0.0, -2.0 * PI / N};

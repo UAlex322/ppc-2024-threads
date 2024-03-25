@@ -1,3 +1,6 @@
+// Copyright 2024 Ustinov Alexander
+#pragma once
+
 #include <complex>
 #include <random>
 #include <vector>
