@@ -46,7 +46,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_perf, test_pipeline_run_dft256x256) {
   sparse_matrix A = dft_matrix(n);
   sparse_matrix B = dft_conj_matrix(n);
   sparse_matrix C;
-  
+
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t*>(&A));
@@ -80,7 +80,7 @@ TEST(ustinov_a_spgemm_csc_complex_seq_perf, test_task_run_dft384x384) {
   sparse_matrix A = dft_matrix(n);
   sparse_matrix B = dft_conj_matrix(n);
   sparse_matrix C;
-  
+
   // Create TaskData
   std::shared_ptr<ppc::core::TaskData> taskDataSeq = std::make_shared<ppc::core::TaskData>();
   taskDataSeq->inputs.emplace_back(reinterpret_cast<uint8_t*>(&A));
