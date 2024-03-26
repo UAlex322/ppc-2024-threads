@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-bool SpgemmCSCComplex::pre_processing() {
+bool SpgemmCSCComplexSeq::pre_processing() {
   internal_order_test();
 
   A = reinterpret_cast<sparse_matrix*>(taskData->inputs[0]);
@@ -12,7 +12,7 @@ bool SpgemmCSCComplex::pre_processing() {
   return true;
 }
 
-bool SpgemmCSCComplex::validation() {
+bool SpgemmCSCComplexSeq::validation() {
   internal_order_test();
   int A_col_num = reinterpret_cast<sparse_matrix*>(taskData->inputs[0])->col_num;
   int B_row_num = reinterpret_cast<sparse_matrix*>(taskData->inputs[1])->row_num;
@@ -20,7 +20,7 @@ bool SpgemmCSCComplex::validation() {
   return (A_col_num == B_row_num);
 }
 
-bool SpgemmCSCComplex::run() {
+bool SpgemmCSCComplexSeq::run() {
   internal_order_test();
 
   // symbolic stage
@@ -52,7 +52,8 @@ bool SpgemmCSCComplex::run() {
   C->values.resize(total_nonzeros);
 
   // numeric stage
-  std::complex<double> zero, b_value;
+  std::complex<double> zero;
+  std::complex<double> b_value;
   std::vector<std::complex<double>> accumulator(C->row_num);
   for (int b_col = 0; b_col < C->col_num; ++b_col) {
     // set accumulator values to zero
@@ -73,7 +74,7 @@ bool SpgemmCSCComplex::run() {
     // write column into matrix C
     int c_pos = C->col_ptr[b_col];
     for (int c_row = 0; c_row < C->row_num; ++c_row) {
-      if (present_elements[c_row]) {
+      if (present_elements[c_row] != 0) {
         C->rows[c_pos] = c_row;
         C->values[c_pos++] = accumulator[c_row];
       }
@@ -83,7 +84,7 @@ bool SpgemmCSCComplex::run() {
   return true;
 }
 
-bool SpgemmCSCComplex::post_processing() {
+bool SpgemmCSCComplexSeq::post_processing() {
   internal_order_test();
   return true;
 }
