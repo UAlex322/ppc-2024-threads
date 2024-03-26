@@ -1,5 +1,5 @@
 // Copyright 2024 Ustinov Alexander
-#include "seq/ustinov_a_spgemm_csc_complex/include/ops_seq.hpp"
+#include "seq/ustinov_a_spgemm_csc_complex/include/ops_omp.hpp"
 
 #include <iostream>
 
@@ -14,6 +14,7 @@ bool SpgemmCSCComplexSeq::pre_processing() {
 
 bool SpgemmCSCComplexSeq::validation() {
   internal_order_test();
+
   int A_col_num = reinterpret_cast<sparse_matrix*>(taskData->inputs[0])->col_num;
   int B_row_num = reinterpret_cast<sparse_matrix*>(taskData->inputs[1])->row_num;
   // check that matrices are compatible for multiplication
@@ -28,11 +29,11 @@ bool SpgemmCSCComplexSeq::run() {
   C->col_num = B->col_num;
   C->col_ptr.resize(C->col_num + 1);
   C->col_ptr[0] = 0;
-  
-  #pragma omp parallel
+
+#pragma omp parallel
   {
     std::vector<int> present_elements(C->row_num);
-    #pragma omp for schedule(dynamic, 64)
+#pragma omp for schedule(dynamic, 64)
     for (int b_col = 0; b_col < C->col_num; ++b_col) {
       for (int c_row = 0; c_row < C->row_num; ++c_row) {
         present_elements[c_row] = 0;
@@ -47,22 +48,25 @@ bool SpgemmCSCComplexSeq::run() {
       for (int c_row = 0; c_row < C->row_num; ++c_row) {
         col_nonzero_count += present_elements[c_row];
       }
-      C->col_ptr[b_col + 1] = col_nonzero_count + C->col_ptr[b_col];
+      C->col_ptr[b_col + 1] = col_nonzero_count;
     }
-    
-    #pragma omp single
+
+#pragma omp single
     {
       // allocate memory for matrix C
+      for (int c_col = 0; c_col < C->col_num; ++c_col) {
+        C->col_ptr[c_col + 1] += C->col_ptr[c_col];
+      }
       int total_nonzeros = C->col_ptr[C->col_num];
       C->rows.resize(total_nonzeros);
       C->values.resize(total_nonzeros);
     }
-    
+
     // numeric stage
     std::complex<double> zero;
     std::complex<double> b_value;
     std::vector<std::complex<double>> accumulator(C->row_num);
-    #pragma omp for schedule(dynamic, 64)
+#pragma omp for schedule(dynamic, 64)
     for (int b_col = 0; b_col < C->col_num; ++b_col) {
       // set accumulator values to zero
       for (int c_row = 0; c_row < C->row_num; ++c_row) {
@@ -77,7 +81,7 @@ bool SpgemmCSCComplexSeq::run() {
           int a_row = A->rows[a_idx];
           accumulator[a_row] += A->values[a_idx] * b_value;
           present_elements[a_row] = 1;
-        }   
+        }
       }
       // write column into matrix C
       int c_pos = C->col_ptr[b_col];

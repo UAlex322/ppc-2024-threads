@@ -6,8 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include "seq/ustinov_a_spgemm_csc_complex/include/ops_seq.hpp"
-#include "seq/ustinov_a_spgemm_csc_complex/include/sparse_matrix.hpp"
+#include "seq/ustinov_a_spgemm_csc_complex/include/ops_omp.hpp"
 
 const double PI = 3.14159265358979323846;
 
