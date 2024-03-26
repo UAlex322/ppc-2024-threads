@@ -1,5 +1,5 @@
 // Copyright 2024 Ustinov Alexander
-#include "seq/ustinov_a_spgemm_csc_complex/include/ops_omp.hpp"
+#include "omp/ustinov_a_spgemm_csc_complex/include/ops_omp.hpp"
 
 #include <iostream>
 
